@@ -18,12 +18,12 @@ jobs:
           username: ${{ secrets.EC2_USER }} 
           key: ${{ secrets.EC2_SSH_KEY }} 
           script: |
-             cd ~/your-project-folder 
-             git pull origin main 
-             docker stop node-app || true
+              cd ~/node-cicd-app
+              git pull origin main 
+              docker stop node-app || true
               docker rm node-app || true 
               docker build -t node-app . 
               docker run -d \
-               --name node-app \
+                --name node-app \
                 -p 80:8080 \
-                 node-app
+                node-app
