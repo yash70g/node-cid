@@ -1,0 +1,34 @@
+name: Deploy Node Docker App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
+
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+
+          script: |
+            cd ~/node-cid
+
+            git pull origin main
+
+            docker stop node-app || true
+            docker rm node-app || true
+
+            docker build -t node-app .
+
+            docker run -d \
+              --name node-app \
+              -p 80:3000 \
+              node-app
